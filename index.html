@@ -1,1 +1,350 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Skema Penelitian Hibah Ajakan Industri</title>
+  <meta name="description" content="Portal interaktif skema penelitian: Kapal Nelayan Baja, Maritime Intelligence Situasional, dan Autonomous Trash Skimmer." />
+  <style>
+    /* ===== THEME ===== */
+    :root{
+      --bg:#0b1220;--ink:#eaf2ff;--muted:#a9b7d9;--card:#111a2b;--stroke:rgba(255,255,255,.09);
+      --primary:#46a6ff;--accent:#40d3a7;--warn:#ffcc66
+    }
+    :root[data-theme="light"]{
+      --bg:#f7fbff;--ink:#0c1730;--muted:#5a6a8c;--card:#ffffff;--stroke:rgba(0,0,0,.08);
+      --primary:#0b6dff;--accent:#0fb997;--warn:#b37500
+    }
+    html{scroll-behavior:smooth}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,"Noto Sans",sans-serif;background:var(--bg);color:var(--ink)}
+    *{box-sizing:border-box}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
 
+    /* ===== NAVBAR ===== */
+    header{position:sticky;top:0;z-index:60;background:linear-gradient(180deg,rgba(10,16,28,.85),rgba(10,16,28,.55));backdrop-filter:blur(12px);border-bottom:1px solid var(--stroke)}
+    .nav{max-width:1200px;margin:auto;display:flex;align-items:center;gap:12px;padding:10px 16px}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.2px}
+    .brand .dot{width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent)}
+    .navlinks{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+    .navlinks a{padding:8px 10px;border-radius:10px;color:var(--muted)}
+    .navlinks a:hover,.navlinks a.active{color:var(--ink);background:rgba(127,127,127,.12)}
+    .theme{margin-left:8px;border:1px solid var(--stroke);background:var(--card);color:var(--ink);border-radius:10px;padding:8px 10px;cursor:pointer}
+
+    /* Scroll progress */
+    .progress{position:absolute;left:0;bottom:0;height:3px;background:linear-gradient(90deg,var(--primary),var(--accent));width:0%}
+
+    /* ===== HERO ===== */
+    .hero{max-width:1200px;margin:0 auto;padding:48px 16px 18px;display:grid;grid-template-columns:1.2fr .8fr;gap:28px;align-items:center}
+    .hero h1{font-size:clamp(28px,4.2vw,44px);line-height:1.15;margin:0}
+    .hero p{color:var(--muted);font-size:1.05rem;margin:.9rem 0 1.1rem}
+    .cta{display:flex;gap:12px;flex-wrap:wrap}
+    .btn{padding:11px 14px;border-radius:12px;border:1px solid var(--stroke);background:var(--card);color:var(--ink);font-weight:700}
+    .btn.primary{background:linear-gradient(135deg,var(--primary),#4ec3ff);border:none}
+    .btn.ghost{background:transparent}
+
+    /* Animated waves */
+    .maritime{aspect-ratio:4/3;border:1px solid var(--stroke);border-radius:18px;overflow:hidden;position:relative;background:radial-gradient(120% 120% at 80% 20%,rgba(70,166,255,.18),transparent 50%),radial-gradient(120% 120% at 20% 80%,rgba(64,211,167,.18),transparent 50%),var(--card)}
+    .wave{position:absolute;left:-20%;right:-20%;height:40%;border-radius:50%;filter:blur(10px);opacity:.6}
+    .w1{bottom:-5%;background:radial-gradient(60% 100% at 50% 0%,rgba(70,166,255,.35),transparent);animation:drift 12s linear infinite}
+    .w2{bottom:-12%;background:radial-gradient(60% 100% at 50% 0%,rgba(64,211,167,.35),transparent);animation:drift 18s linear infinite reverse}
+    @keyframes drift{from{transform:translateX(-5%)}to{transform:translateX(5%)}}
+
+    /* ===== WRAPPER / SECTION ===== */
+    section{scroll-margin-top:86px}
+    .wrap{max-width:1200px;margin:auto;padding:36px 16px}
+    h2{font-size:clamp(22px,3vw,30px);margin:0 0 6px}
+    .lead{color:var(--muted);margin:0 0 18px}
+
+    /* ===== TOOLBAR (search + filters) ===== */
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0 18px}
+    .search{flex:1;min-width:200px;display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--stroke);border-radius:12px;padding:10px}
+    .chips{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{padding:6px 10px;border-radius:999px;background:rgba(127,127,127,.12);border:1px solid var(--stroke);cursor:pointer;font-size:.9rem}
+    .chip.active{outline:2px solid var(--accent)}
+
+    /* ===== GRID CARDS ===== */
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .card{background:var(--card);border:1px solid var(--stroke);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;transform:translateY(6px);opacity:0;transition:transform .5s ease,opacity .5s ease}
+    .card.visible{transform:translateY(0);opacity:1}
+    .badge{display:inline-flex;gap:8px;align-items:center;font-size:.85rem;color:#cfe0ff}
+    .pill{padding:3px 8px;border-radius:999px;background:rgba(127,127,127,.12);border:1px solid var(--stroke)}
+    .card p{color:var(--muted);margin:.25rem 0 .5rem}
+    .meta{display:flex;gap:8px;flex-wrap:wrap}
+    .tag{font-size:.8rem;padding:6px 10px;border-radius:999px;background:rgba(127,127,127,.12);border:1px dashed var(--stroke)}
+
+    /* Accordion inside card */
+    .acc{border-top:1px dashed var(--stroke);margin-top:8px;padding-top:8px}
+    .acc summary{cursor:pointer;font-weight:700}
+    .acc p{margin:.4rem 0;color:var(--muted)}
+
+    /* ===== TIMELINE ===== */
+    .timeline{margin:10px 0 0;display:grid;gap:10px}
+    .step{display:grid;grid-template-columns:120px 1fr;gap:12px;align-items:center}
+    .bar{height:10px;border-radius:999px;background:rgba(127,127,127,.18);overflow:hidden}
+    .fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));width:0%}
+
+    /* ===== FOOTER & FAB ===== */
+    footer{border-top:1px solid var(--stroke);color:var(--muted)}
+    .fab{position:fixed;right:18px;bottom:18px;padding:12px 14px;border-radius:999px;border:1px solid var(--stroke);background:var(--card);cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.25);display:none}
+    .fab.show{display:block}
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width:960px){.hero{grid-template-columns:1fr}.grid{grid-template-columns:1fr 1fr}}
+    @media (max-width:600px){.grid{grid-template-columns:1fr}.step{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <!-- NAV -->
+  <header>
+    <nav class="nav" aria-label="Utama">
+      <a class="brand" href="#home" aria-label="Beranda">
+        <span class="dot" aria-hidden="true"></span>
+        <span>Skema Penelitian</span>
+      </a>
+      <div class="navlinks" role="tablist">
+        <a href="#home" class="active" role="tab">Home</a>
+        <a href="#kapal" role="tab">Kapal Nelayan Baja</a>
+        <a href="#mi" role="tab">Maritime Intelligence Situasional</a>
+        <a href="#skimmer" role="tab">Trash Skimmer</a>
+      </div>
+      <button class="theme" id="toggleTheme" title="Ganti tema">🌓</button>
+      <div class="progress" id="progress"></div>
+    </nav>
+  </header>
+
+  <!-- HERO / HOME -->
+  <main id="home" class="hero">
+    <div>
+      <h1>Hibah Ajakan Industri · Portal Interaktif</h1>
+      <p class="lead">Tiga fokus riset dengan tampilan interaktif: <em>kapal nelayan baja</em>, <em>maritime intelligence situasional</em>, dan <em>autonomous trash skimmer</em>. Dirancang bertahap TKT 3→6, berorientasi hilirisasi dan validasi industri.</p>
+      <div class="cta">
+        <a class="btn primary" href="#kapal">Mulai Jelajah</a>
+        <a class="btn ghost" href="#kontak">Kontak Tim</a>
+      </div>
+    </div>
+    <div class="maritime" aria-hidden="true">
+      <div class="wave w1"></div>
+      <div class="wave w2"></div>
+    </div>
+  </main>
+
+  <!-- KAPAL NELAYAN BAJA -->
+  <section id="kapal" class="wrap">
+    <h2>⚓ Kapal Nelayan Baja</h2>
+    <p class="lead">Modernisasi desain & produksi kapal nelayan berbahan baja: efisiensi struktur, keselamatan, dan kesiapan industri.</p>
+
+    <div class="toolbar">
+      <div class="search"><span>🔎</span><input id="searchKapal" type="text" placeholder="Cari aktivitas / tag (mis. FEA, Sea Trial)" style="all:unset;flex:1"/></div>
+      <div class="chips" id="chipsKapal">
+        <button class="chip" data-filter="TKT">TKT</button>
+        <button class="chip" data-filter="CAD">CAD/FEA</button>
+        <button class="chip" data-filter="Sea">Sea Trial</button>
+      </div>
+    </div>
+
+    <div class="grid" id="gridKapal">
+      <article class="card reveal" data-tags="TKT CAD FEA desain struktur">
+        <span class="badge"><span class="pill">WP1</span> Desain Konseptual</span>
+        <p>Baseline kebutuhan operasional, analisis beban, dan optimasi bentuk lambung awal.</p>
+        <div class="meta"><span class="tag">TKT 3→4</span><span class="tag">CAD/FEA</span><span class="tag">Standar Kelas</span></div>
+        <details class="acc"><summary>Detail & Luaran</summary>
+          <p>Luaran: spesifikasi awal, studi kelayakan, laporan risiko awal.</p>
+          <div class="timeline">
+            <div class="step"><div><strong>Q4‑2025</strong></div><div class="bar"><div class="fill" style="width:30%"></div></div></div>
+          </div>
+        </details>
+      </article>
+      <article class="card reveal" data-tags="TKT CAD produksi shipyard BoM">
+        <span class="badge"><span class="pill">WP2</span> Detail Engineering</span>
+        <p>Detail struktur & outfit, rencana produksi, integrasi rantai pasok lokal.</p>
+        <div class="meta"><span class="tag">TKT 4→5</span><span class="tag">Shipyard Ready</span></div>
+        <details class="acc"><summary>Detail & Luaran</summary>
+          <p>Luaran: paket gambar kerja, BoM, rencana QA/QC.</p>
+          <div class="timeline">
+            <div class="step"><div><strong>Q1‑2026</strong></div><div class="bar"><div class="fill" style="width:60%"></div></div></div>
+          </div>
+        </details>
+      </article>
+      <article class="card reveal" data-tags="TKT Sea trial sertifikasi uji laut">
+        <span class="badge"><span class="pill">WP3</span> Validasi Prototipe</span>
+        <p>Fabrikasi komponen kunci & uji kolam/laut terbatas.</p>
+        <div class="meta"><span class="tag">TKT 5→6</span><span class="tag">Sea Trial</span></div>
+        <details class="acc"><summary>Detail & Luaran</summary>
+          <p>Luaran: laporan uji, rekomendasi sertifikasi, SOP perawatan.</p>
+          <div class="timeline">
+            <div class="step"><div><strong>Q2‑2026</strong></div><div class="bar"><div class="fill" style="width:15%"></div></div></div>
+          </div>
+        </details>
+      </article>
+    </div>
+  </section>
+
+  <!-- MARITIME INTELLIGENCE SITUASIONAL -->
+  <section id="mi" class="wrap">
+    <h2>🛰️ Maritime Intelligence Situasional</h2>
+    <p class="lead">Sensor fusion (AIS/EO/IR/SAR) dan AI untuk kesadaran situasional maritim real‑time.</p>
+
+    <div class="toolbar">
+      <div class="search"><span>🔎</span><input id="searchMI" type="text" placeholder="Cari aktivitas / tag (mis. ETL, YOLO, WebGIS)" style="all:unset;flex:1"/></div>
+      <div class="chips" id="chipsMI">
+        <button class="chip" data-filter="ETL">ETL</button>
+        <button class="chip" data-filter="YOLO">YOLO/Tracking</button>
+        <button class="chip" data-filter="WebGIS">WebGIS</button>
+      </div>
+    </div>
+
+    <div class="grid" id="gridMI">
+      <article class="card reveal" data-tags="ETL AIS citra dataset kurasi">
+        <span class="badge"><span class="pill">WP1</span> Data Pipeline</span>
+        <p>Standardisasi data AIS & citra, labelisasi, dan ETL ke data lake.</p>
+        <div class="meta"><span class="tag">TKT 3→4</span><span class="tag">ETL</span></div>
+        <details class="acc"><summary>Detail & Luaran</summary>
+          <p>Luaran: dataset terkurasi, dokumentasi skema, pedoman privasi data.</p>
+        </details>
+      </article>
+      <article class="card reveal" data-tags="YOLO deteksi tracking MOTA mAP">
+        <span class="badge"><span class="pill">WP2</span> Model Deteksi & Tracking</span>
+        <p>Algoritma deteksi kapal & pelacakan multi‑sensor dengan evaluasi mAP/MOTA.</p>
+        <div class="meta"><span class="tag">TKT 4→5</span><span class="tag">YOLO/ByteTrack</span></div>
+        <details class="acc"><summary>Detail & Luaran</summary>
+          <p>Luaran: model terlatih, laporan evaluasi, benchmark publik.</p>
+        </details>
+      </article>
+      <article class="card reveal" data-tags="WebGIS dashboard alert analitik">
+        <span class="badge"><span class="pill">WP3</span> Dashboard Operasional</span>
+        <p>Dashboard web untuk peringatan & analitik situasional.</p>
+        <div class="meta"><span class="tag">TKT 5→6</span><span class="tag">WebGIS</span></div>
+        <details class="acc"><summary>Detail & Luaran</summary>
+          <p>Luaran: prototipe demo, panduan operasional, feedback mitra industri.</p>
+        </details>
+      </article>
+    </div>
+  </section>
+
+  <!-- AUTONOMOUS TRASH SKIMMER -->
+  <section id="skimmer" class="wrap">
+    <h2>🛶 Autonomous Trash Skimmer</h2>
+    <p class="lead">USV pembersih sampah perairan dengan otonomi navigasi, pengumpulan, dan pemetaan beban sampah.</p>
+
+    <div class="toolbar">
+      <div class="search"><span>🔎</span><input id="searchSkimmer" type="text" placeholder="Cari aktivitas / tag (mis. Orin, ROS2, Sertifikasi)" style="all:unset;flex:1"/></div>
+      <div class="chips" id="chipsSkimmer">
+        <button class="chip" data-filter="Orin">NVIDIA Orin</button>
+        <button class="chip" data-filter="ROS2">ROS2</button>
+        <button class="chip" data-filter="Sea">Sea Trial</button>
+      </div>
+    </div>
+
+    <div class="grid" id="gridSkimmer">
+      <article class="card reveal" data-tags="TKT arsitektur hardware Orin listrik BoM">
+        <span class="badge"><span class="pill">WP1</span> Arsitektur & Perangkat Keras</span>
+        <p>Perancangan lambung, aktuasi, dan arsitektur komputasi tepi.</p>
+        <div class="meta"><span class="tag">TKT 3→4</span><span class="tag">NVIDIA Orin</span></div>
+        <details class="acc"><summary>Detail & Luaran</summary>
+          <p>Luaran: BoM, skema kelistrikan, rencana integrasi dan keselamatan listrik.</p>
+        </details>
+      </article>
+      <article class="card reveal" data-tags="ROS2 otonomi persepsi path-planning">
+        <span class="badge"><span class="pill">WP2</span> Otonomi & Persepsi</span>
+        <p>Persepsi objek terapung & rencana lintasan, dari simulasi ke lapangan.</p>
+        <div class="meta"><span class="tag">TKT 4→5</span><span class="tag">ROS2</span></div>
+        <details class="acc"><summary>Detail & Luaran</summary>
+          <p>Luaran: stack otonomi, dataset uji, laporan performa.</p>
+        </details>
+      </article>
+      <article class="card reveal" data-tags="Sea trial sertifikasi SOP keselamatan">
+        <span class="badge"><span class="pill">WP3</span> Uji Lapangan & Validasi</span>
+        <p>Uji kolam/sungai, keandalan, dan keselamatan operasi.</p>
+        <div class="meta"><span class="tag">TKT 5→6</span><span class="tag">Sea Trial</span></div>
+        <details class="acc"><summary>Detail & Luaran</summary>
+          <p>Luaran: hasil uji, SOP operasi, kajian sertifikasi.</p>
+        </details>
+      </article>
+    </div>
+  </section>
+
+  <!-- KONTAK -->
+  <section id="kontak" class="wrap">
+    <h2>📬 Kontak</h2>
+    <p class="lead">Tertarik berkolaborasi atau menjadi mitra uji? Hubungi kami melalui email institusi Anda.</p>
+    <div class="card reveal"><p><strong>Koordinasi:</strong> Tim Skema Penelitian Hibah Ajakan Industri</p><p>Email: <a href="mailto:research@example.ac.id">research@example.ac.id</a> · Lokasi: Surabaya, Indonesia</p></div>
+  </section>
+
+  <footer class="wrap"><small>© <span id="y"></span> Skema Penelitian Hibah Ajakan Industri • Dibangun untuk GitHub Pages</small></footer>
+
+  <button class="fab" id="toTop" title="Kembali ke atas">⬆️</button>
+
+  <script>
+    /* ===== THEME TOGGLE ===== */
+    const html=document.documentElement;
+    const prev=localStorage.getItem('theme');
+    if(prev) html.setAttribute('data-theme', prev);
+    document.getElementById('toggleTheme').onclick=()=>{
+      const next=html.getAttribute('data-theme')==='light'?'dark':'light';
+      html.setAttribute('data-theme',next);localStorage.setItem('theme',next);
+    };
+
+    /* ===== SCROLL PROGRESS & ACTIVE NAV ===== */
+    const progress=document.getElementById('progress');
+    const links=[...document.querySelectorAll('.navlinks a')];
+    const secs=links.map(a=>document.querySelector(a.getAttribute('href')));
+    const io=new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          const id='#'+e.target.id;links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')===id));
+        }
+      })
+    },{rootMargin:'-60% 0px -35% 0px',threshold:[0,1]});
+    secs.forEach(s=>io.observe(s));
+    window.addEventListener('scroll',()=>{
+      const h=document.documentElement;const p=(h.scrollTop)/(h.scrollHeight-h.clientHeight)*100;progress.style.width=p+'%';
+      document.getElementById('toTop').classList.toggle('show',h.scrollTop>600);
+    });
+
+    /* ===== REVEAL ON SCROLL ===== */
+    const revealIO=new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');revealIO.unobserve(e.target);}})
+    },{threshold:.12});
+    document.querySelectorAll('.reveal, .card').forEach(el=>revealIO.observe(el));
+
+    /* ===== TIMELINE BAR ANIMATION ===== */
+    const barIO=new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{if(e.isIntersecting){e.target.querySelectorAll('.fill').forEach(f=>{const w=f.style.width;f.style.width='0%';setTimeout(()=>f.style.width=w,80);});barIO.unobserve(e.target);}})
+    },{threshold:.4});
+    document.querySelectorAll('.timeline').forEach(t=>barIO.observe(t));
+
+    /* ===== BACK TO TOP ===== */
+    document.getElementById('toTop').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
+
+    /* ===== SEARCH & FILTER (per section) ===== */
+    function setupFilter(sectionId){
+      const grid=document.getElementById('grid'+sectionId);
+      const input=document.getElementById('search'+sectionId);
+      const chips=document.getElementById('chips'+sectionId);
+      let activeTag='';
+      function apply(){
+        const q=(input?.value||'').toLowerCase();
+        [...grid.children].forEach(card=>{
+          const tags=(card.getAttribute('data-tags')||'').toLowerCase();
+          const byText=q? (card.textContent.toLowerCase().includes(q)||tags.includes(q)) : true;
+          const byChip=activeTag? tags.includes(activeTag.toLowerCase()) : true;
+          card.style.display=(byText && byChip)?'flex':'none';
+        });
+      }
+      input?.addEventListener('input',apply);
+      chips?.addEventListener('click',(e)=>{
+        const b=e.target.closest('.chip'); if(!b) return;
+        chips.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+        if(activeTag===b.dataset.filter){ activeTag=''; }
+        else { activeTag=b.dataset.filter; b.classList.add('active'); }
+        apply();
+      });
+    }
+    ['Kapal','MI','Skimmer'].forEach(setupFilter);
+
+    /* ===== FOOTER YEAR ===== */
+    document.getElementById('y').textContent=new Date().getFullYear();
+  </script>
+</body>
+</html>
